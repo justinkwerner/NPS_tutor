@@ -1,0 +1,127 @@
+System Architecture: NPS SS3861 LLM Tutor
+Overview
+The system is an AI tutoring assistant for a spacecraft payload communications course (SS3861) at the Naval Postgraduate School. A Streamlit front-end talks to a LangGraph ReAct agent, which retrieves relevant course material from ChromaDB vector stores and persists conversations in SQLite. The vector stores are built offline through a separate ingestion pipeline, and everything runs in Docker.
+
+1. Ingestion Pipeline (Offline, One-Time)
+Before any user interaction, course documents must be processed and indexed. This is an offline data preparation step — not part of the live query path.
+
+Step 1 — Document parsing (scripts/ingest_pdf.py, scripts/ingest_pptx.py):
+Raw PDFs, PowerPoints, and DOCX files are fed through Docling, which does layout-aware parsing. The output is split into chunks (max 512 tokens each) using a HybridChunker and saved as structured JSON staging files: lectures.json, labs.json, manual.json, etc.
+
+Step 2 — Vectorstore build (scripts/build_vectorstore.py):
+The JSON chunks are loaded, enriched with metadata (doc_type, lecture_number, topic), then run through a second-pass SemanticChunker that uses embeddings to split at natural semantic boundaries. The final chunks are embedded and stored in two ChromaDB collections:
+
+unified_course (persist dir: databases/chroma_unified) — lectures, labs, and the oscilloscope manual
+satops_course (persist dir: databases/chroma_satops) — satellite operations content (MAX GDS commands, telemetry, pass scheduling)
+
+The SATOPS collection has its own dedicated pipeline script (scripts/build_satops_vectorstore.py) that handles ingestion of DOCX files via Docling and Markdown files via a text splitter, enriches the chunks, applies semantic chunking, and loads them into ChromaDB — all in one step.
+
+Chunk IDs are deterministic hashes, so re-running either build script is idempotent — only new chunks are added. Instructors can also upload new documents at runtime through the Streamlit UI (see Section 6), which calls ingest_file_to_vectorstore() using lightweight extraction (pypdf, python-pptx, python-docx) rather than Docling, so the heavy ML dependency is not needed at runtime.
+
+2. Embedding Model
+The embedding model converts text into vectors for both indexing (ingestion time) and retrieval (query time) — the same model must be used for both or the similarity math breaks down.
+
+The agent (agent/agent.py) uses a three-level priority fallback chain:
+
+NVIDIA hosted (nvidia/nv-embed-v1) — if NIM_API_KEY is set and reachable
+NPS HuggingFace server (trac-malenia.ern.nps.edu) — on-network GPU server
+Local fallback (all-MiniLM-L6-v2) — always available, CPU-only
+
+The offline build scripts (scripts/build_vectorstore.py, scripts/build_satops_vectorstore.py) use a two-level chain: NPS HuggingFace server → local fallback (no NVIDIA option, since batch ingestion runs on-premises).
+
+The Docker image pre-downloads the local fallback model into a cached image layer so startup is fast even without network access.
+
+3. Retrieval-Augmented Generation (RAG) at Query Time
+Once the vector stores exist, the RAG pattern kicks in at query time: take the user's question, query the vector store for relevant chunks, and pass those chunks to the LLM as context for generation.
+
+In this system, the RAG retrieval step is exposed as agent tools rather than a fixed pipeline. The agent decides which retrieval tool to call based on the nature of the question:
+
+retrieve_context_lectures — searches lecture slides, optionally filtered by lecture number
+retrieve_context_labs — searches lab assignments
+retrieve_context_manuals — searches the oscilloscope manual
+retrieve_context_satops — searches satellite operations content
+rewrite_and_retrieve — for broad or ambiguous questions: decomposes the query into sub-queries, searches all doc types, deduplicates results
+
+All retrieval tools call filtered_search() or satops_search(), which run a similarity search against ChromaDB and apply a minimum relevance threshold (0.15) to filter out low-quality matches.
+
+After similarity search, each retrieval tool optionally applies cross-encoder re-ranking (see Section 3a) before returning results to the LLM.
+
+3a. Re-Ranking (Optional)
+An optional cross-encoder re-ranking stage sits between retrieval and generation. It is enabled by setting RERANKER_MODEL in .env (e.g., cross-encoder/ms-marco-MiniLM-L-6-v2); if unset, the system falls back to the original similarity-score ordering.
+
+When active, every set of retrieved (document, score) pairs is passed to _rerank(), which:
+1. Scores each (query, document) pair with the cross-encoder.
+2. Sorts by cross-encoder score (descending).
+3. Returns the top-N results.
+
+Re-ranking improves precision by replacing the coarse cosine-similarity score with a query-aware relevance judgment. It applies to all five retrieval tools.
+
+4. The Agent
+The agent is built with LangGraph's prebuilt ReAct framework (agent/agent.py — build_agent()). It connects to any OpenAI-compatible LLM endpoint via NIM_BASE_URL, NIM_API_KEY, and NIM_MODEL in .env.
+
+How a query flows through the agent:
+
+run_agent() loads conversation history from SQLite, converts it to LangChain HumanMessage/AIMessage objects, and appends the current query.
+The LangGraph ReAct loop begins: the LLM reasons about which tool to use and calls it.
+The tool result (post-retrieval, post-reranking) is fed back into the context, and the LLM reasons again.
+This continues until the LLM produces a final answer with no further tool calls.
+
+Full tool suite:
+
+Tool                      Purpose
+retrieve_context_lectures  Search lecture slides (with optional lecture_number filter)
+retrieve_context_labs      Search lab assignments
+retrieve_context_manuals   Search oscilloscope manual
+rewrite_and_retrieve       Multi-query retrieval for broad or ambiguous questions
+retrieve_context_satops    Search satellite operations content (MAX GDS, telemetry, pass scheduling)
+web_search                 DuckDuckGo fallback when no course material is relevant
+python_calculator          Safe evaluator for binary/hex conversions and unit math
+
+Query rewriting (_rewrite_query()) is triggered by rewrite_and_retrieve. It sends the original question to the LLM with a prompt that expands it into multiple focused sub-queries (delimited by [START]), runs each through retrieval, and merges the deduplicated results. This improves recall for vague or multi-part questions.
+
+The system prompt is personalized: instructors get peer-level technical discussion; students get Socratic-style guidance that avoids giving direct answers.
+
+5. SQLite Database
+The database (SQL_db/database.py) has three tables:
+
+
+users         → id, name, role (student | instructor), created_at
+conversations → id, user_id (FK), started_at
+messages      → id, conversation_id (FK), role, content, timestamp
+This gives the agent persistent, multi-session memory. When a user logs in, their record is fetched or created (get_or_create_user()), a new conversation session is started (start_conversation()), and every user and assistant message is saved via save_message(). When the agent is invoked, get_conversation_history() loads the last 20 messages for that session so the LLM has full context of the prior exchange.
+
+Switching conversations in the sidebar changes the active conversation_id, which transparently replaces the history passed to the agent.
+
+6. Streamlit App
+The app (app/app.py) is the front-end and the glue layer. On startup it:
+
+Calls init_db() to ensure SQLite tables exist
+Calls _ensure_vectorstore() (cached per process) — if the unified ChromaDB is empty, triggers a full vectorstore build with a spinner
+
+Login page (show_login()): Name + role form → creates or fetches the user record and starts a conversation session.
+
+Chat page (show_chat()):
+
+Sidebar shows conversation history, a "New conversation" button, and — for instructors only — a document upload panel for live ingestion.
+When the user submits a message:
+The message is displayed immediately and saved to SQLite
+run_agent() is called (lazy-imported for cold-start performance) with the query, user context, and current conversation ID
+The agent runs its ReAct loop, calling retrieval tools (with optional re-ranking) as needed
+The response is displayed and saved to SQLite
+
+Instructor upload panel (sidebar, instructors only):
+Instructors select a target vectorstore ("Course materials" → unified_course, or "SATOPS" → satops_course) and a doc_type category (e.g., "lecture", "lab", "manual", "satops_commands"), then upload a PDF, PPTX, DOCX, or Markdown file. The app calls ingest_file_to_vectorstore(), which uses lightweight extraction (no Docling) to parse the file, applies semantic chunking, and adds only new chunks to the chosen vectorstore idempotently.
+
+The app never queries ChromaDB directly — all retrieval goes through the agent.
+
+7. Docker
+The Dockerfile builds from python:3.11-slim. Key choices:
+
+Installs CPU-only PyTorch explicitly to avoid a 2+ GB CUDA download
+Pre-downloads all-MiniLM-L6-v2 into a dedicated image layer (cached at build time, not pulled on every container start)
+Exposes port 8501 and runs streamlit run app/app.py
+The docker-compose.yml mounts three volumes into the container:
+
+./databases/chroma_unified and ./databases/chroma_satops — vector stores built outside the container before first run
+./docker_db — SQLite file, so conversation history persists across container restarts
+LLM credentials and configuration are passed in from the host .env file.

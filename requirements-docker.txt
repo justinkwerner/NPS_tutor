@@ -1,0 +1,37 @@
+# Slim requirements for Docker deployment.
+# torch is installed separately via the PyTorch CPU wheel index (see Dockerfile).
+
+# Web UI
+streamlit>=1.35.0
+plotly>=5.0.0
+python-dotenv>=1.0.0
+
+# LangChain / LangGraph
+langchain>=0.3.0
+langchain-chroma>=0.1.0
+langchain-community>=0.3.0
+langchain-core>=0.3.0
+langchain-huggingface>=0.1.0
+langchain-nvidia-ai-endpoints>=0.3.0
+langchain-groq>=0.2.0
+langchain-openai>=0.2.0
+langchain-experimental>=0.3.0
+langchain-text-splitters>=0.3.0
+langgraph>=0.2.0
+langgraph-prebuilt>=0.1.0
+
+# Vector store
+chromadb>=0.5.0
+
+# Embeddings (requires torch — installed in Dockerfile before this file)
+sentence-transformers>=3.0.0
+
+# LLM / search clients
+openai>=1.0.0
+ddgs>=6.0.0
+
+# Document ingestion (instructor upload feature — lightweight, no ML models)
+pypdf>=3.0.0
+python-pptx>=0.6.0
+python-docx>=1.0.0
+langchain-text-splitters>=0.3.0

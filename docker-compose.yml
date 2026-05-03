@@ -1,0 +1,14 @@
+services:
+  tutor:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./databases/chroma_unified:/app/databases/chroma_unified   # Course materials ChromaDB
+      - ./databases/chroma_satops:/app/databases/chroma_satops     # SATOPS ChromaDB
+      - ./docker_db:/app/docker_db                                  # SQLite3 persistence
+    environment:
+      SQLITE_DB_PATH: /app/docker_db/tutor.db
+      SATOPS_CHROMA_DB_PATH: /app/databases/chroma_satops
+    env_file:
+      - .env

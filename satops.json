@@ -1,0 +1,709 @@
+[
+  {
+    "text": "**REVISION SUMMARY**\n0, **DATE** = 8/20/24. 0, **AUTHOR** = C. Woodruff Lyons. 0, **BRIEF DESCRIPTION OF CHANGE** = Initial Draft. , **DATE** = . , **AUTHOR** = . , **BRIEF DESCRIPTION OF CHANGE** = . , **DATE** = . , **AUTHOR** = . , **BRIEF DESCRIPTION OF CHANGE** = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Download.docx",
+    "filename": "File_Download.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Step**,  = **Action**. **Step**,  = **Performed?**. ,  = On the Windows Machine access the Asterias Tasking App (ATA) in Google.\n\n[https://asterias.ssag.nps.edu/tasking/](https:/asterias.ssag.nps.edu/tasking). ,  = . ,  = On the same Windows Machine, log into Grafana\n\n[Dashboards - Grafana (nps.edu)](https:/asterias.ssag.nps.edu/grafana/dashboards). ,  = . ,  = Click MOLA, and scroll down to APID QUERIER AND VIEWER.. ,  = . ,  = In APID (num), enter the values 2503 and 7200. When you get data back from the satellite it will be in these telemetry windows.. ,  = . ,  = Make sure the Mola Flight 1.2.1 Oracle VM VirualBox is open.. ,  = . ,  = In the VM launch click on “Launch GDS” and the cheat sheet for MOLA will automatically open along with Max GDS and Telemetry Stats.. ,  = . ,  = Using the cheat sheet execute the command under the comment “#Open file download cheatsheet” by\n\n**clicking**\n\non the line with the command and then pressing\n\n**ctrl+enter**\n\na new cheat sheet will open specifically for downloading files from MOLA\n\n**## Cheatsheets ##**\n\n/cheatsheet cheatsheets/file_download.txt. ,  = . ,  = . ,  = . ,  = 1. If you don’t want to reorient the vehicle run FUNC_tx_timer.fj. This turns on telemetry for a specific amount of time in seconds and then turns it off. Type the following in the command window:\n\n**/cmd FJ_START_REL -a \"0\" \"FUNC_tx_timer\" \"600\"**\n\n1. If you want/need to reorient the vehicle, type the following in the command window:",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Download.docx",
+    "filename": "File_Download.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**/cmd FJ_START_REL -a \"0\" \"OPS_track_only\" \"600,pch,0,0,0\"**\n\nNOTE: Type the amount of seconds that you want the telemetry to be on for\n\nNOTE: Change this to the ground station being used. ,  = . ,  = To turn on telemetry data, sent rt-contact. ,  = . ,  = Go to Grafana, Mola Beacons and check that the battery is above 3.7 volts\n\nCheck bus mode = normal ops. ,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Download.docx",
+    "filename": "File_Download.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Step**,  = **Action**. **Step**,  = **Performed?**. ,  = Change the file name that’s highlighted to the back orbit file that you want to find. This is the format for finding commands, while in steps 2-8 have examples of ways to find data, that does not include everything. If you have specific data that you want to find, use the formula below.\n\n**# Find a backorbit log file**\n\n**/cmd FC_SHELL \"ls /mnt/shared/tlm_store/backorbit/<part_of_filename>*\" \"1\"**. ,  = . ,  = The following are Linux commands for copying files that are on the spacecraft. The first 4 commands are back orbits, the second to last command gets TIC images that are stored on the spacecraft and have not been sent down, and the last command gets telemetry that has been stored. It is possible to combine the date and type of data, but there is no need to be that specific. These commands only list the files and sort them from newest to oldest according to date of modification. It DOES NOT get the files.. ,  = . ,  = The command below shows telemetry data from a certain day, use the link to calculate the number of days since 4/21/2023 from your date, and plug that number in.\n\n[Calculate Duration Between Two Dates – Results (timeanddate.com)](https:/www.timeanddate.com/date/durationresult.html?d1=21&m1=4&y1=2023&d2=&m2=&y2=&h1=0&i1=0&s1=0&h2=&i2=&s2=)\n\n**/cmd FC_SHELL -a “ls -t /mnt/shared/tlm_store/backorbit/427* | head -n 4 “ “1”**. ,  = . ,  = The command below shows event response telemetry, which are notifications that events occurred such as errors, warning, or acknowledgements that changes occurred. The highlighted number is the number of recent files that it will show. It can be changed but keep the number low under 25 so that download is quick.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Download.docx",
+    "filename": "File_Download.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**/cmd FC_SHELL -a “ls -t /mnt/shared/tlm_store/backorbit/*_EVR* | head -n 10 “ “1”**. ,  = . ,  = The command below shows Attitude Determination and Control system data, which is data that shows MOLAs orbit, and where it is positioned. The highlighted number is the number of recent files that it will show. It can be changed but keep the number low under 25 so that download is quick.\n\n**/cmd FC_SHELL -a “ls -t /mnt/shared/tlm_store/backorbit/*_ADCS* | head -n 10 “ “1”**. ,  = . ,  = The command below shows data on the electrical power system (EPS), which is data  about the amount of power MOLA uses, and when it is lower or higher. The highlighted number is the number of recent files that it will show. It can be changed but keep the number low under 25 so that download is quick.\n\n**/cmd FC_SHELL -a “ls -t /mnt/shared/tlm_store/backorbit/*_EPS* | head -n 10 “ “1”**. ,  = . ,  = The command below shows the lists of  images that were taken on the TIC, use the name of the file to plug into the download command in Method 1.\n\n**/cmd FC_SHELL -a “ls -t /mnt/shared/payloads/tic/imgs/*” “1”**. ,  = . ,  = The command below shows all the recent telemetry data files, in case  there is a certain file that is wanted, but the data inside is not known.\n\n**/cmd FC_SHELL -a “ls -t /mnt/shared/tlm_store/*” “1”**. ,  = . ,  = Use one of the following methods written below to download a file from Mola to the Computer. ,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Download.docx",
+    "filename": "File_Download.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Step**,  = **Action**. **Step**,  = **Performed?**. ,  = On the file_download.txt cheatsheet, go to the first line\n\n**# File Download TLM**\n\nClick the lines list below and hit control +enter. By pressing those buttons, you will not have to retype the commands. Open the telemetry windows, to be able to see the data coming down on 7200 on Grafana\n\n**/tlmwinrate -a 7200 -f 1**. ,  = . ,  = Open the file download telemetry window. This gives immediate feedback on the commands sent.\n\n**# Open file download telemetry window**\n\n**/file_download_win**. ,  = . ,  = Download the files needed using the formula below, replace the highlights with the file name.\n\n**/filedownload download -f \"/mnt/shared/payloads/tic/imgs/XXXXX\"**\n\n**/filedownload download -f \"/mnt/shared/tlm_store/backorbit/XXXXXX”**. ,  = . ,  = To make  sure no data is missing from the data downloaded, fill all the gaps in the data.\n\n**# Download missing packets from file download window**\n\n**/filedownload allgaps**. ,  = . ,  = Change the highlighted path to dir to the date used in step 1 of Method 1.\n\n**# Save files to a directory**\n\n**/filedownload saveall -p <**\n\n/Desktop/Mola-downloads/YYYY-MM-DD\n\n**>**. ,  = . ,  = Clear all the files from the download window, and if needed repeat step 5.\n\n**# Clear files from file download window**\n\n**/filedownload clearall**. ,  = . ,  = Stop downloading files and data when you don’t need anymore or when the pass is close to completion.\n\n**# Stop all file downloads**\n\n**/filedownload stopall**. ,  = . ,  = Go to the Procedure Logs to Database to put downloaded files on your computer.. ,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Download.docx",
+    "filename": "File_Download.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Step**,  = **Action**. **Step**,  = **Performed?**. ,  = Click the lines list below and hit control +enter. By pressing those buttons, you will not have to retype the commands. Open the telemetry windows, to be able to see the data coming down on 7200 and 2503 on Grafana.\n\n**# File Download TLM**\n\n**/tlmwinrate -a 7200 -f 1**. ,  = . ,  = Open the file download telemetry window. This gives immediate feedback on the commands sent.\n\n**# Open file download telemetry window**\n\n**/file_download_win**. ,  = . ,  = This method embeds the files in the telemetry steam if it has not been sent already. The files need to be moved to the not sent file in order to send it.\n\n**# copy files you want to download to not_sent**\n\n**/cmd FC_SHELL \"cp <path to desired file> /mnt/shared/downloads/not_sent\" \"1\"**. ,  = . ,  = Send the command below to start downloading the files from the not sent folder to the telemetry streams.\n\n**# start the filedownload process**\n\n**/mcl \"DPT_rt_file.cfg\"**. ,  = . ,  = To make  sure no data is missing from the data downloaded, fill all the gaps in the data.\n\n**# get any missing packets**\n\n**/filedownload allgaps**. ,  = . ,  = All the files that have been sent are now in the sent folder. Make sure to clear the sent folder before moving on.\n\n**# clear sent folder when all files are downloaded**\n\n**/cmd FC_SHELL -a \"rm /mnt/shared/downloads/sent/*\" \"1\"**. ,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Download.docx",
+    "filename": "File_Download.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Step**,  = **Action**. **Step**,  = **Performed?**. **1**,  = If the flight software is crashed, use linux operating system not Max to download files. This method is not preferred use and should only be used for emergencies.\n\n**# Download a file with scp (terminal window not MAX GDS)**\n\n**scp root@192.169.7.1:/mnt/shared/payloads/tic/imgs/ksp.jpeg /home/ssagadmin/Desktop**. **1**,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Download.docx",
+    "filename": "File_Download.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**REVISION SUMMARY**\n0, **DATE** = 8/20/24. 0, **AUTHOR** = C. Woodruff Lyons. 0, **BRIEF DESCRIPTION OF CHANGE** = Initial Draft. , **DATE** = . , **AUTHOR** = . , **BRIEF DESCRIPTION OF CHANGE** = . , **DATE** = . , **AUTHOR** = . , **BRIEF DESCRIPTION OF CHANGE** = \n.fj file tested on FlatSat?",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Upload.docx",
+    "filename": "File_Upload.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Step**,  = **Action**. **Step**,  = **Performed?**. **Step**,  = . ,  = On the Windows Machine access the Asterias Tasking App (ATA) in Google.\n\n[https://asterias.ssag.nps.edu/tasking/](https:/asterias.ssag.nps.edu/tasking). ,  = . ,  = . ,  = On the same Windows Machine, log into Grafana\n\n[Dashboards - Grafana (nps.edu)](https:/asterias.ssag.nps.edu/grafana/dashboards). ,  = . ,  = . ,  = Click MOLA, and scroll down to APID QUERIER AND VIEWER.. ,  = . ,  = . ,  = In APID (num), enter the values 2503 and 7100. When you get data back from the satellite it will be in these telemetry windows.. ,  = . ,  = . ,  = Make sure the Mola Flight 1.2.1 Oracle VM VirualBox is open.. ,  = . ,  = . ,  = . ,  = . ,  = . ,  = Drag and drop the file from the Windows Download to the VM Desktop Upload.. ,  = . ,  = . ,  = In the VM launch click on “Launch GDS” and the cheat sheet for MOLA will automatically open along with Max GDS and Telemetry Stats.. ,  = . ,  = . ,  = Using the cheat sheet execute the command under the comment “#Open upload and deploy file cheatsheet” by\n\n**clicking**\n\non the line with the command and then pressing\n\n**ctrl+enter**\n\na new cheat sheet will open specifically for uploading a file to MOLA\n\n**/cheatsheet cheatsheets/upload_deploy_file.txt**. ,  = . ,  = . ,  = In the command terminal in /home/ssagadmin /Desktop/Uploads on the VM execute an MD5 checksum on the file to upload. This will produce a hexadecimal value that will be used later to confirm that the file data has been sent, and the data is correct.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Upload.docx",
+    "filename": "File_Upload.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**md5sum filename.fj**. ,  = . ,  = . ,  = In the upload-deploy_file.txt cheat sheet replace the first previous md5 values with the current value under\n\n**# check md5summ for uploaded file**\n\nand\n\n**heck md5summ for deployed file**\n\n**# Check md5summ for uploaded file**\n\n**/cmd FC_SHELL -a \"md5sum /mnt/shared/uploads/loop_sched.fj\" \"5\"**\n\n**161043881ccc703f34e3e332d5f50d9a**\n\n**161043881ccc703f34e3e332d5f50d9a**. ,  = . ,  = . ,  = **SAVE THE CHEAT SHEET WITH CTRL+S**. ,  = . ,  = . ,  = 1. If you don’t want to reorient the vehicle run FUNC_tx_timer.fj. This turns on telemetry for a specific amount of time in seconds and then turns it off. Type the following in the command window: Turns on real-time telemetry (rtdpt) for a specified pass duration (sec) and turns off the real-time telemetry and transmissions (except for beacon) at the end\n\n**/cmd FJ_START_REL -a \"0\" \"FUNC_tx_timer\" \"600\"**\n\n1. If you want/need to reorient the vehicle, type the following in the command window:\n\n**/cmd FJ_START_REL -a \"0\" \"OPS_track_only\" \"600,pch,0,0,0\"**\n\nNOTE: Type the number of seconds that you want the telemetry to be on for",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Upload.docx",
+    "filename": "File_Upload.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "NOTE: Change this to the ground station being used. ,  = . ,  = . ,  = Go to Grafana, Mola Beacons and check that the battery is above 3.7 volts. ,  = . ,  = . ,  = Check bus mode = normal ops. ,  = . ,  = . ,  = Keep both the mola_cheatsheet.txt and the upload_deploy_file.txt cheatsheets open.. ,  = . ,  = . ,  = On the upload_deploy_file.text cheatsheet, go to the first line # Start standard output stream. Click the lines list below, and hit control +enter. By pressing those buttons, you will not have to retype the commands.\n\n**/tlmwinrate -a 2503 -f 1**\n\n**/tlmwinrate -a 7100 -f 1**. ,  = . ,  = . ,  = To see what is already in the uploads folder on the satellite, use the command listed under # See what is in uploads already. This is perfect to check to see if your file was already previously uploaded.\n\n**/cmd FC_SHELL -a \"ls /mnt/shared/uploads/\" \"1\"**. ,  = . ,  = . ,  = To upload a file, use the command written under # Upload file.\n\n**/fileupload -\"/home/ssagadmin/Desktop/Uploads/loop_sched.fj\"**\n\n**-d\"/mnt/shared/uploads/loop_sched.fj\" -p 2**\n\nNOTE: The file name and file type will need to change to fit the new file.. ,  = . ,  = . ,  = **The commands following this depend on the type of file being uploaded to the satellite.**. ,  = . ,  = . ,  = In the ATA Tasking, log all notes and descriptions in the passes completed.. ,  = . ,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Upload.docx",
+    "filename": "File_Upload.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Step**,  = **Action**. **Step**,  = **Performed?**. 1.,  = After the upload file is on the satellite, it needs to be uploaded to the current memory side. The code for this upload is specific to the type of file.\n\n**# Deploy new file to current memory side**\n\n**/cmd FC_SHELL -a \"cp /mnt/shared/uploads/loop_sched.fj /root/MAX/seq/loop_sched.fj\" \"1\"**\n\nNOTE: The file name will need to change in accordance with the file that is uploaded to the satellite. 1.,  = . 2.,  = Check the md5sum for the newly deployed file, and make sure it matches with the md5sum that was pasted in the beginning. Put the new md5sum in the highlighted area to check.\n\n**# Check md5sum for newly deployed file**\n\n**/cmd FC_SHELL -a \"md5sum /root/MAX/seq/loop_sched.fj\" \"5\"**\n\n**161043881ccc703f34e3e332d5f50d9a**\n\n**161043881ccc703f34e3e332d5f50d9a**. 2.,  = . 3.,  = The command below starts the .fj sequence loop_sched immediately.\n\n**/cmd FJ_START_REL 0 loop_sched 0**. 3.,  = . 4.,  = The next step is to find out what side you are on, that way you can upload the document to the other memory side. This makes sure that if there is a problem there are 2 copies of the document in case something happens with one of the memory sides, and that it can access the document no matter what side it is on.\n\n**# Find what side you are on**\n\n**/cmd FC_SHELL -a \"echo $BOOT_SIDE\" \"5\"**. 4.,  = . ,  = If you are on the NAND SIDE. ,  = . 5.,  = If you are on the NAND side, mount the SD so that you can edit it\n\n**.**",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Upload.docx",
+    "filename": "File_Upload.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**#If you're on NAND, mount the SD**\n\n**/cmd FC_SHELL -a \"mount /dev/mmcblk0p2 /mnt/sdcard\" 1**. 5.,  = . 6.,  = Add the file to the SD side.\n\n**# Deploy to SD**\n\n**/cmd FC_SHELL -a \"cp /mnt/shared/uploads/startup.fj /mnt/sdcard/root/MAX/seq/startup.fj\" \"1\"**. 6.,  = . 7.,  = Make sure that the SD side got the file, and it is the right one, by checking the md5Sum\n\n**# Check md5sum for deployed file**\n\n**/cmd FC_SHELL -a \"md5sum /mnt/sdcard/root/MAX/seq/startup.fj\" \"5\"**. 7.,  = . 8.,  = Unmount the SD, so that you can be on the NAND side and not have any issues\n\n**.**\n\n**# Unmount SD**\n\n**/cmd FC_SHELL -a \"umount /mnt/sdcard\" 1**. 8.,  = . ,  = If you are on the SD. ,  = . 9.,  = If you are on the SD side, mount the NAND so that you can edit it.\n\n**#If you're on SD, mount ND**\n\n**/cmd FC_SHELL -a \"mount_nand\" 1**. 9.,  = . 10.,  = Add the file to the NAND side.\n\n**# Deploy to NAND**\n\n**/cmd FC_SHELL -a \"cp /mnt/shared/uploads/startup.fj /mnt/nand/root/MAX/seq/startup.fj\" \"1\"**. 10.,  = . 11.,  = Make sure that the NAND side got the file, and it is the right one, by checking the md5Sum\n\n**# Check md5sum for deployed file**",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Upload.docx",
+    "filename": "File_Upload.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**/cmd FC_SHELL -a \"md5sum /mnt/nand/root/MAX/seq/startup.fj\" \"5\"**. 11.,  = . 12,  = Unmount the NAND, so that you can be on the SD side and not have any issues.\n\n**# Unmount ND**\n\n**/cmd FC_SHELL -a \"umount /mnt/nand\" 1**. 12,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/File_Upload.docx",
+    "filename": "File_Upload.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**REVISION SUMMARY**\n0, **DATE** = 8/30/2024. 0, **AUTHOR** = C. Woodruff Lyons. 0, **BRIEF DESCRIPTION OF CHANGE** = Initial Draft. , **DATE** = . , **AUTHOR** = . , **BRIEF DESCRIPTION OF CHANGE** = . , **DATE** = . , **AUTHOR** = . , **BRIEF DESCRIPTION OF CHANGE** = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/Manual_Passes(BackOrbit,RealTime)-NotNormalOps.docx",
+    "filename": "Manual_Passes(BackOrbit,RealTime)-NotNormalOps.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Step**,  = **Action**. **Step**,  = **Performed?**. ,  = On the Windows Machine access the Asterias Tasking App (ATA) in Google.\n\n[https://asterias.ssag.nps.edu/tasking/](https:/asterias.ssag.nps.edu/tasking). ,  = . ,  = On the same Windows Machine, log into Grafana\n\n[Dashboards - Grafana (nps.edu)](https:/asterias.ssag.nps.edu/grafana/dashboards). ,  = . ,  = Make sure the Mola Flight 1.2.1 Oracle VM VirualBox is open.. ,  = . ,  = Log into Satrn to see the pass start, when the pass is above 5 degrees on the horizon, use the commands below.. ,  = . ,  = Turns on telemetry on for the duration of seconds. The highlight end can be changed to the duration of the pass or however long telemetry should be sending. This does not need to be done in Normal Ops, and it only turns the ability to operate real_time telemetry, it does not turn the telemetry on. However, it will automatically transmit EVRs.\n\n**cmd FJ_START_REL -a \"0\" \"FUNC_tx_timer\" \"600\"**. ,  = . ,  = After this you have two options, if there is enough time in the pass you might be able to do both options.. ,  = . ,  = Optional: Turn on real-time telemetry data which is always good to have to make sure that Mola is running correctly.\n\n**# Stream real-time telemetry (useful for after a reboot to watch startup)**\n\n**/cmd FJ_START_REL -a \"0\" \"rt_contact\" \"0\"**. ,  = . ,  = Optional: Request Back orbit data. There are two choices getting data from the last 24 hours, or the last three hours. DON’T send both commands.\n\n**# Full 24 hour backorbit dump**",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/Manual_Passes(BackOrbit,RealTime)-NotNormalOps.docx",
+    "filename": "Manual_Passes(BackOrbit,RealTime)-NotNormalOps.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**/cmd FJ_START_REL -a \"0\" \"start_backorbit\" \"86400,200,2\"**\n\n**# Two orbit dump**\n\n**/cmd FJ_START_REL -a \"0\" \"start_backorbit\" \"10540,60,2\"**. ,  = . ,  = If you want to do anything else, you need to get out of Normal Operation. Go to the Mola_Ops_Readme to get instructions on how to get into Normal Ops.. ,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/Manual_Passes(BackOrbit,RealTime)-NotNormalOps.docx",
+    "filename": "Manual_Passes(BackOrbit,RealTime)-NotNormalOps.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Week 2 Team Practical Exercise: Quick-turn Analysis – Russian Invasion of Ukraine**\n**Discussion:**\nIf a unit has lost more than 30% of its strength, it is, by some measures, classified as “combat ineffective.” A straight-leg infantry company (about 100 soldiers) has three infantry platoons of about 30 soldiers each. If the company loses 33% of its soldiers is it truly combat ineffective? In terms of a company’s combat effectiveness, are these two equivalent?\n- Each platoon loses 33% of its soldiers.\n- One platoon loses ALL soldiers, and the other two platoons have taken no casualties.\n**Task 1**\n: Intelligence estimates that the Russians will break off the attack once they have taken 40% casualties. Ukraine is scrambling all its forces (including the 13 BTGs that we earlier assumed were Ukraine’s strategic reserve) so they are NOT in a prepared defense. Assume Ukraine is capable of exchanging at a 2-1 attrition ratio with the Russians.\n1. Determine if the Ukraine Army’s 38 BTGs can hold off the 40 Russian BTGs or if the Russians will defeat the Ukrainian defenders in a breakpoint battle.\n2. How many forces will each side have remaining once the battle is finished?\n**Task 2: More realistic Lanchester**\n**Discussion:**\nThe Battle for Trafalgar demonstrated to Lanchester that his equations are better served if they are used to replicate smaller, meaningful battles rather than assuming two aggregate forces (one blue and one red) are fighting as we did in Task 1.\n1. Distribute your 38 BTGs among the five blue arrows. Your first priority is to hold Kiev, the capital, being attacked on three axes by the Russians! Second priority is to blunt the Russian thrust from Crimea. Third is to hold back all other Russian forces.\n1. Determine if the Ukraine Army’s 38 BTGs can hold off the 40 Russian BTGs or if the Russians will defeat the Ukrainian defenders in a breakpoint battle.\n1. How many forces will each side have remaining once the battle is finished?\n1. Given your outcomes for the five battles, if you got a chance to redo your force allocation, what would you consider changing and why?\n**Bonus: Estimate the mix of motorized and armored BTGs of the 40 total BTGs the Russians have fielded.**",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/Team+Practical+Exercise+2+_2025-NEW_-++Quick-turn+Analysis+–+Russian+Invasion+of+Ukraine.docx",
+    "filename": "Team+Practical+Exercise+2+_2025-NEW_-++Quick-turn+Analysis+–+Russian+Invasion+of+Ukraine.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Discussion:**\nADM Munsch was convinced by your analysis last week that this would not be a short war. He wants you to do more detailed analysis using an operational level combat simulation that can distinguish between an infantry BTG and an armored BTG.\nUse the article “Russian Battalion Groups Are Assembling Around Ukraine. What Is Putin Up To?” as the basis for your calculations. List all assumptions you make!\n**Step 1:**\nUse the “National Security Threats to Ukraine” graphic and the article “Russian Battalion Groups Are Assembling Around Ukraine. What Is Putin Up To?” (specifically the paragraph “What’s a Battalion Tactical Group?”) to determine the numbers of numbers of personnel, AFVs, tanks, and artillery there are in a motorized infantry BTG. Now do the same for an armored BTG.\n**Step 2:**\nUsing only APCs and tanks, figure out the number of armor and motorized infantry BTGs the Russians could form if all their assets in the “National Security Threats to Ukraine” graphic (Nov 2021) were used for BTGs.\n**Step 3:**\nApply the ratio of motorized infantry to armor BTGs that you determined in step 2 to estimate the breakout of the 40 BTGs into motorized infantry and armor BTGs.\n**Step 4:**\nCompare the composition of your BTGs to the representative BTG that was estimated in Task 1. The Russians have far more personnel, tanks, AFVS (armored fighting vehicles, such as BMPs or BTR-80/82) and tanks than are needed to form 40 BTGs! What are all the extras for?",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/Team+Practical+Exercise+2+_2025-NEW_-++Quick-turn+Analysis+–+Russian+Invasion+of+Ukraine.docx",
+    "filename": "Team+Practical+Exercise+2+_2025-NEW_-++Quick-turn+Analysis+–+Russian+Invasion+of+Ukraine.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**REVISION SUMMARY**\n0, **DATE** = 6/10/2024. 0, **AUTHOR** = A. Cabral. 0, **BRIEF DESCRIPTION OF CHANGE** = Initial Draft. 1, **DATE** = 8/27/24. 1, **AUTHOR** = C. Woodruff Lyons. 1, **BRIEF DESCRIPTION OF CHANGE** = Expanded both sections, and added photos. , **DATE** = . , **AUTHOR** = . , **BRIEF DESCRIPTION OF CHANGE** = \n**Step**,  = **Action**. **Step**,  = **Performed?**. ,  = On the Windows Machine access the Asterias Tasking App (ATA) in Google.\n\n[https://asterias.ssag.nps.edu/tasking/](https:/asterias.ssag.nps.edu/tasking). ,  = . ,  = On the same Windows Machine, log into Grafana\n\n[Dashboards - Grafana (nps.edu)](https:/asterias.ssag.nps.edu/grafana/dashboards). ,  = . ,  = Log into the SATRN Client for MOLA and open to the upcoming pass on SATRN.. ,  = . ,  = On the Virtual Machine open MOLA Flight 1.2 if not already open.. ,  = . ,  = Launch GDS (Ground Data Software) the MOLA Cheat Sheet should open.. ,  = . ,  = Refresh SATRN for current data until connection is established.. ,  = . ,  = Antenna will slew to the beginning of pass which will not start until the elevation reaches 5 degrees or more depending on the ground station.. ,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/Unscheduled_Passes_NormalOps.docx",
+    "filename": "Unscheduled_Passes_NormalOps.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**Step**,  = **Action**. **Step**,  = **Performed?**. ,  = Once data begins transmitting (orange triangles will appear at the top in SATRN), check Grafana to make sure that the bus mode is in normal operation, and the battery level is above 3.7 V.. ,  = . ,  = When the pass is above 5 degrees, ping the satellite in. ,  = . ,  = The following passes choices are optional. Choose whichever one is better for you.. ,  = . ,  = Optional: After the pings go through, press\n\n**ctrl+enter**\n\nto execute the unscheduled tracking  pass. This command tracks a ground station for time specified. Remember to change the duration, and the ground station name.\n\n**# Start unscheduled track only pass**\n\n**/cmd FJ_START_REL -a \"0\" \"OPS_track_only\" \"600,pch,0,0,0\"**\n\n**Important:**\n\ncommands may have to sent more than once for the command to be confirmed. ,  = . ,  = Optional: After the pings go through, press\n\n**ctrl+enter**\n\nto execute the unscheduled maintenance pass. This command tracks a ground station and sends all back orbit data to the database. Remember to change the duration, and the ground station name.\n\n**# Start unscheduled maintenance  pass**\n\n**/cmd FJ_START_REL -a \"0\" \"OPS_maintenance_pass\" \"600,afit,0,0,0\"**. ,  = . ,  = To confirm that the command was received in the Grafana database the AC mode will change. ,  = . ,  = MAX GDS may show a failure to execute a command that is normal it is just acknowledging that the command has already been sent and will not run it at the same time.. ,  = . ,  = Check data rate in the Telemetry Stats window to be 4.8 kbs to check if the data rate is normal. ,  = . ,  = Start the tx_timer to get real time telemetry data for as many seconds as the tx_timer is on. This command will not send real time data, it will only allow you to send real time data.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/Unscheduled_Passes_NormalOps.docx",
+    "filename": "Unscheduled_Passes_NormalOps.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "**/cmd FJ_START_REL -a \"0\" \"FUNC_tx_timer\" \"600\"**. ,  = . ,  = To send real time data, use the command below. This will show the Event Response Telemetry in real time.\n\n**/rtdpt**. ,  = . ,  = If you want to, enter one of the backorbit information downloads either 24 hours or the past 2 orbits. Those commands can be found under\n\n**##Backorbit##.**\n\nOne of the commands gives data from the last 24 hours, the other one does the past 3 hours. Use whichever one is more relevant. DO NOT use both commands.\n\n**# Full 24 hour backorbit dump**\n\n**/cmd FJ_START_REL -a \"0\" \"start_backorbit\" \"86400,200,2\"**\n\n**# Two orbit dump**\n\n**/cmd FJ_START_REL -a \"0\" \"start_backorbit\" \"10540,60,2\"**. ,  = . ,  = Close GDS at the end of the pass.. ,  = . ,  = Log Tasks and notes. ,  = ",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/Unscheduled_Passes_NormalOps.docx",
+    "filename": "Unscheduled_Passes_NormalOps.docx",
+    "page": 0,
+    "filetype": ".docx"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\napidinfo\nusage: /apidinfo [-h] [-s SPACECRAFT] apid_or_mnemonic\n\nLists the specific APID mnemonic and its associated details. Also lists all\ntelemetry channels associated with that APID.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/apidinfo.md",
+    "filename": "apidinfo.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  apid_or_mnemonic      The APID or APID mnemonic.\n\noptions:\n  -h, --help            show this help message.\n  -s SPACECRAFT, --spacecraft SPACECRAFT\n                        Name of the target spacecraft.\n                        \n                        This defaults to the /active target in the system.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/apidinfo.md",
+    "filename": "apidinfo.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\napidls\nusage: /apidls [-h] [-s SPACECRAFT] [--sort {APID,Mnemonic}] [mnemonic]\n\nLists the APID mnemonics and their associated descriptions that exist for the\nactive spacecraft.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/apidls.md",
+    "filename": "apidls.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  mnemonic              The APID mnemonic or mnemonic fragment.  Wildcards\n                        characters \"*\" can be used at the beginning and/or end\n                        of a mnemonic fragment to pull all APID mnemonics\n                        starting with or ending with a set of characters.\n                        (default: None)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/apidls.md",
+    "filename": "apidls.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.\n  --sort {APID,Mnemonic}\n                        Specifies whether the APIDs will be sorted by APID value\n                        or alphabetically by mnemonic. (default: Mnemonic)\n  -s SPACECRAFT, --spacecraft SPACECRAFT\n                        Name of the target spacecraft.\n                        \n                        This defaults to the /active target in the system.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/apidls.md",
+    "filename": "apidls.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\nclear\nusage: /clear [-h]\n\nClears the text out of the window.\n\noptions:\n  -h, --help  show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/clear.md",
+    "filename": "clear.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ncmd_output\nusage: /cmd_output [-h]\n                   [{MAIN_WINDOW,EXTERNAL_WINDOW,MAIN_AND_EXTERNAL_WINDOW}]\n                   [{UI,SPACECRAFT,UI_AND_SPACECRAFT}]",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/cmd_output.md",
+    "filename": "cmd_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Sets the output level for where to display commands that were sent to the\nspacecraft. Displays the current display setting if no arguments are provided.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/cmd_output.md",
+    "filename": "cmd_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  {UI,SPACECRAFT,UI_AND_SPACECRAFT}\n                        Set the type of commands that will be displayed in the\n                        cmd output window.\n                        Options:\n                        \n                        - UI = Only output UI commands to the external window.\n                        - SPACECRAFT = Only output spacecraft commands to the\n                        external window.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/cmd_output.md",
+    "filename": "cmd_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "external window.\n                        - UI_AND_SPACECRAFT = Output UI and spacecraft commands\n                        to the external window. (default: SPACECRAFT)\n  {MAIN_WINDOW,EXTERNAL_WINDOW,MAIN_AND_EXTERNAL_WINDOW}\n                        Set the output level of commands that were sent to the\n                        spacecraft.\n                        Options:\n                        \n                        - MAIN_WINDOW = Show output only in the main window.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/cmd_output.md",
+    "filename": "cmd_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "- EXTERNAL_WINDOW = Show output in an external window.\n                        - MAIN_AND_EXTERNAL_WINDOW = Show output in the main\n                        window and the external window. (default: None)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/cmd_output.md",
+    "filename": "cmd_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/cmd_output.md",
+    "filename": "cmd_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ndb_stat_win\nusage: /db_stat_win [-h] [-t TITLE] [--xy XY] [-s SIZE]\n\nOpens a window to show what database stats are active/available at the moment.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/db_stat_win.md",
+    "filename": "db_stat_win.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.\n  -s SIZE, --size SIZE  The size of the window. Should be in the following\n                        format: [W]x[H]\n  -t TITLE, --title TITLE\n                        Title for the window.\n  --xy XY               Sets the initial X/Y location of the window. The value\n                        should be provided as X+Y.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/db_stat_win.md",
+    "filename": "db_stat_win.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\nevr_output\nusage: /evr_output [-h] [--xy XY]\n                   [{MAIN_WINDOW,EXTERNAL_WINDOW,MAIN_AND_EXTERNAL_WINDOW}]",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/evr_output.md",
+    "filename": "evr_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Sets the EVR output level for where to display EVRs. Displays the current\ndisplay setting if no arguments are provided.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/evr_output.md",
+    "filename": "evr_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  {MAIN_WINDOW,EXTERNAL_WINDOW,MAIN_AND_EXTERNAL_WINDOW}\n                        Set the output level of incoming EVRs.\n                        Options:\n                        \n                        - MAIN_WINDOW = Show EVRs only in the main window.\n                        - EXTERNAL_WINDOW = Show EVRs in an external window.\n                        - MAIN_AND_EXTERNAL_WINDOW = Show EVRs in the main\n                        window and the external window. (default: None)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/evr_output.md",
+    "filename": "evr_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.\n  --xy XY               Sets the initial X/Y location of the window. The value\n                        should be provided as X+Y.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/evr_output.md",
+    "filename": "evr_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\nfile_download_win\nusage: /file_download_win [-h] [-s SPACECRAFT] [-r REFRESH_RATE] [-t TITLE]\n\nOpens up a window with the current file download status.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/file_download_win.md",
+    "filename": "file_download_win.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Opens up a window with the current file download status.\n\noptions:\n  -h, --help            show this help message.\n  -r REFRESH_RATE, --refresh_rate REFRESH_RATE\n                        The rate, in seconds, to refresh the file download data.\n                        (default: 0.5)\n  -s SPACECRAFT, --spacecraft SPACECRAFT\n                        The spacecraft to monitor for file download data.\n  -t TITLE, --title TITLE\n                        The title of the window (default: File Download Status)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/file_download_win.md",
+    "filename": "file_download_win.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\nfile_upload_win\nusage: /file_upload_win [-h] [-r REFRESH_RATE] [-t TITLE]\n\nOpens up a window with the current file upload status.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/file_upload_win.md",
+    "filename": "file_upload_win.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Opens up a window with the current file upload status.\n\noptions:\n  -h, --help            show this help message.\n  -r REFRESH_RATE, --refresh_rate REFRESH_RATE\n                        The rate, in seconds, to refresh the file upload data.\n                        (default: 0.5)\n  -t TITLE, --title TITLE\n                        The title of the window (default: File Upload Status)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/file_upload_win.md",
+    "filename": "file_upload_win.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ngeometry\nusage: /geometry [-h] [geometrystring]\n\nEither displays or sets the geometry of the main window.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/geometry.md",
+    "filename": "geometry.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Either displays or sets the geometry of the main window.\n\npositional arguments:\n  geometrystring  The geometry string. Should be in the following format:\n                  [W]x[H]+[X]+[Y]\n\noptions:\n  -h, --help      show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/geometry.md",
+    "filename": "geometry.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\nscript_output\nusage: /script_output [-h]\n                      [{MAIN_WINDOW,EXTERNAL_WINDOW,MAIN_AND_EXTERNAL_WINDOW}]",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/script_output.md",
+    "filename": "script_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Sets the script output level for where to display script output. Displays the\ncurrent display setting if no arguments are provided.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/script_output.md",
+    "filename": "script_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  {MAIN_WINDOW,EXTERNAL_WINDOW,MAIN_AND_EXTERNAL_WINDOW}\n                        Set the output level of text displayed from a script.\n                        Options:\n                        \n                        - MAIN_WINDOW = Show output only in the main window.\n                        - EXTERNAL_WINDOW = Show output in an external window.\n                        - MAIN_AND_EXTERNAL_WINDOW = Show output in the main",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/script_output.md",
+    "filename": "script_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "window and the external window. (default: None)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/script_output.md",
+    "filename": "script_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/script_output.md",
+    "filename": "script_output.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\nstalecolor\nusage: /stalecolor [-h] [-s SPACECRAFT] [color]\n\nChanges the stale color from the gray default to something else.\n\npositional arguments:\n  color                 Color to be used.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/stalecolor.md",
+    "filename": "stalecolor.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.\n  -s SPACECRAFT, --spacecraft SPACECRAFT\n                        Spacecraft to change the color for.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/stalecolor.md",
+    "filename": "stalecolor.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\nstaletimeout\nusage: /staletimeout [-h] [-s SPACECRAFT] [timeout_sec]\n\nSets the stale timeout for stale telemetry. Prints the timeout to the screen. If\nno arguments are given, the current stale timeout is printed.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/staletimeout.md",
+    "filename": "staletimeout.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  timeout_sec           Timeout value in seconds.\n\noptions:\n  -h, --help            show this help message.\n  -s SPACECRAFT, --spacecraft SPACECRAFT\n                        Spacecraft to change the timeout for.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/staletimeout.md",
+    "filename": "staletimeout.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntextdisplay\nusage: /textdisplay [-h] [-t TITLE] [-d ERTDELAY] [-f FILENAME] [-p PRINT]\n                    [-e EPRINT]\n\nOpens up a window with a scrolling printout of what is going to the MasterUI\nwindow.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/textdisplay.md",
+    "filename": "textdisplay.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -e EPRINT, --eprint EPRINT\n                        Causes that token to be EXCLUSIVELY printed to the text\n                        display window.\n  -d ERTDELAY, --ertdelay ERTDELAY\n                        Sets the delay between printing the current time. < 0.0\n                        to turn off.\n  -f FILENAME, --filename FILENAME\n                        Causes a file to be generated and written to with that\n                        data that goes to the screen.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/textdisplay.md",
+    "filename": "textdisplay.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "data that goes to the screen.\n  -h, --help            show this help message.\n  -p PRINT, --print PRINT\n                        Causes that token to be printed to the text display\n                        window.\n  -t TITLE, --title TITLE\n                        Sets the title of the window.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/textdisplay.md",
+    "filename": "textdisplay.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntitle\nusage: /title [-h] [title]\n\nChanges the title of the window.\n\npositional arguments:\n  title       The title of the window\n\noptions:\n  -h, --help  show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/title.md",
+    "filename": "title.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntlmbytestat\nusage: /tlmbytestat [-h] [-a ACTIVE] [-t TITLE] [-e ERTDELAY] [-f FILENAME]\n                    [-cn CONNECTION_NAME]\n\nOpens up a window with a scrolling hex dump of every byte that is received from\nthe target.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmbytestat.md",
+    "filename": "tlmbytestat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -a ACTIVE, --active ACTIVE\n                        Sets the active target spacecraft that gets displayed to\n                        this window.\n  -cn CONNECTION_NAME, --connection_name CONNECTION_NAME\n                        Connection name to add the byte stat window for.\n                        Defaults to the primary Spacecraft connection.\n  -e ERTDELAY, --ertdelay ERTDELAY\n                        Sets the delay in seconds between printing the current",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmbytestat.md",
+    "filename": "tlmbytestat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "time. < 0.0 to turn off.\n  -f FILENAME, --filename FILENAME\n                        Causes a file to be generated and written to with the\n                        data that goes to the screen.\n  -h, --help            show this help message.\n  -t TITLE, --title TITLE\n                        Sets the title of the window.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmbytestat.md",
+    "filename": "tlmbytestat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntlmcolor\nusage: /tlmcolor [-h] [{add,clear,list,remove}]\n\nusage: /tlmcolor add [-h] [-s SPACECRAFT] mnemonic {eq,gt,lt} value color\n\nusage: /tlmcolor remove [-h] mnemonic\n\nusage: /tlmcolor clear [-h]",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmcolor.md",
+    "filename": "tlmcolor.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "usage: /tlmcolor clear [-h]\n\nFor a given MNEMONIC, each time the value is updated in a tlmwin, if the\ncomparison evaluates to True, the color is set in the tlmwin.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmcolor.md",
+    "filename": "tlmcolor.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  {add,clear,list,remove}\n                        Operation to perform. Possible choices are:\n                        \n                        \"add\"\n                        \n                        Add conditional color to a given mnemonic\n                        \n                        \"clear\"\n                        \n                        Clear all conditional colors for all mnemonics\n                        \n                        \"list\"",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmcolor.md",
+    "filename": "tlmcolor.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "\"list\"\n                        \n                        List all color conditions with their corresponding\n                        mnemonic and spacecraft\n                        \n                        \"remove\"\n                        \n                        Remove all conditional colors for a given mnemonic.\n                        (default: list)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmcolor.md",
+    "filename": "tlmcolor.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.\n\nusage: /tlmcolor add [-h] [-s SPACECRAFT] mnemonic {eq,gt,lt} value color\n\nAdd conditional color to a given mnemonic\n\npositional arguments:\n  color                 Color to be used when [mnemonic][operation][value] is\n                        true.\n  {eq,gt,lt}            Operation to compare against the mnemonic with.\n  mnemonic              Mnemonic to be used for the comparison.\n  value                 Value to compare against the mnemonic.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmcolor.md",
+    "filename": "tlmcolor.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.\n  -s SPACECRAFT, --spacecraft SPACECRAFT\n                        Spacecraft to be used.\n\nusage: /tlmcolor clear [-h]\n\nClear all conditional colors for all mnemonics\n\noptions:\n  -h, --help  show this help message.\n\n\nusage: /tlmcolor list [-h]\n\n\nusage: /tlmcolor remove [-h] mnemonic\n\nRemove all conditional colors for a given mnemonic.\n\npositional arguments:\n  mnemonic    Mnemonic to be used for the comparison.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmcolor.md",
+    "filename": "tlmcolor.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help  show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmcolor.md",
+    "filename": "tlmcolor.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntlmframestat\nusage: /tlmframestat [-h] [-a ACTIVE] [-t TITLE] [-e ERTDELAY] [-f FILENAME]\n                     [--xy XY] [-s SIZE] [-cn CONNECTION_NAME]",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmframestat.md",
+    "filename": "tlmframestat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Opens up a window with a scrolling text that is information about the frames\ncoming in from the target.\n\nFS6: SCET, SCLK, Packet Counter, Cumulative Skips, SCID, frame CRC,\n     APID, length of packet\nSOLIS: SCET, SCLK, APID, length",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmframestat.md",
+    "filename": "tlmframestat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -a ACTIVE, --active ACTIVE\n                        Sets the active target spacecraft that gets displayed to\n                        this window.\n  -cn CONNECTION_NAME, --connection_name CONNECTION_NAME\n                        Connection name to add the frame stat window for.\n                        Defaults to the primary Spacecraft connection.\n  -e ERTDELAY, --ertdelay ERTDELAY\n                        Sets the delay in seconds between printing the current",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmframestat.md",
+    "filename": "tlmframestat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "time. < 0.0 to turn off.\n  -f FILENAME, --filename FILENAME\n                        Causes a file to be generated and written to with the\n                        data that goes to the screen.\n  -h, --help            show this help message.\n  -s SIZE, --size SIZE  The size of the window. Should be in the following\n                        format: [W]x[H]\n  -t TITLE, --title TITLE\n                        Sets the title of the window.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmframestat.md",
+    "filename": "tlmframestat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Sets the title of the window.\n  --xy XY               Sets the initial X/Y location of the window. The value\n                        should be provided as X+Y.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmframestat.md",
+    "filename": "tlmframestat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntlmstat\nusage: /tlmstat [-h] [{max_duration,show}]\n\nusage: /tlmstat show [-h] [-t TITLE] [--xy XY] [-s SIZE]\n\nusage: /tlmstat max_duration [-h] [-a ACTIVE] [-cn CONNECTION_NAME] [duration]\n\nTelemetry stats commands.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmstat.md",
+    "filename": "tlmstat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  {max_duration,show}  Operation to perform. Possible choices are:\n                       \n                       \"max_duration\"\n                       \n                       Gets or sets the duration, in seconds, to store packets\n                       for calculating frame rates\n                       \n                       \"show\"\n                       \n                       Opens a window to show what telemetry stats are",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmstat.md",
+    "filename": "tlmstat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "active/available at the moment. (default: show)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmstat.md",
+    "filename": "tlmstat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help           show this help message.\n\ntlmstat show\nusage: /tlmstat show [-h] [-t TITLE] [--xy XY] [-s SIZE]\n\nOpens a window to show what telemetry stats are active/available at the moment.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmstat.md",
+    "filename": "tlmstat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.\n  -s SIZE, --size SIZE  The size of the window. Should be in the following\n                        format: [W]x[H]\n  -t TITLE, --title TITLE\n                        Title for the window.\n  --xy XY               Sets the initial X/Y location of the window. The value\n                        should be provided as X+Y.\n\ntlmstat max_duration\nusage: /tlmstat max_duration [-h] [-a ACTIVE] [-cn CONNECTION_NAME] [duration]",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmstat.md",
+    "filename": "tlmstat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Gets or sets the duration, in seconds, to store packets for calculating frame\nrates\n\npositional arguments:\n  duration              Interval (in seconds) for frame rate to be calculated\n                        over. (default: None)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmstat.md",
+    "filename": "tlmstat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -a ACTIVE, --active ACTIVE\n                        Sets the active target spacecraft that gets displayed to\n                        this window.\n  -cn CONNECTION_NAME, --connection_name CONNECTION_NAME\n                        Connection name to adjust the max duration for.\n                        Defaults to the primary Spacecraft connection.\n  -h, --help            show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmstat.md",
+    "filename": "tlmstat.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntlmwin\nusage: /tlmwin [-h] [-r REFRESH_RATE] [-t TITLE] [--xy XY] [-s] [--size SIZE]\n               apid_or_mnemonic [apid_or_mnemonic ...]\n\nOpens a window with the specified apids/mnemonics.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwin.md",
+    "filename": "tlmwin.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Opens a window with the specified apids/mnemonics.\n\nAn apid includes all the mnemonics from the apid, and any individual mnemonics\nthat are also specified.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwin.md",
+    "filename": "tlmwin.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  apid_or_mnemonic      APID(s), APID mnemonic(s), and/or channel mnemonic(s) to\n                        show in the telemetry window. APIDs can be specified\n                        individually or with ranges. Examples:\n                           /tlmwin 600\n                           /tlmwin 600 601\n                           /tlmwin 600-602\n                           /tlmwin 600,601-603,700",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwin.md",
+    "filename": "tlmwin.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help            show this help message.\n  -r REFRESH_RATE, --refresh_rate REFRESH_RATE\n                        Sets refresh rate (seconds) of the telemetry window.\n                        Rate faster than 0.5 seconds can slow down performance.\n                        (default: 0.5)\n  -s, --separate        Flag that opens APIDs in separate windows instead of\n                        consolidating into 1 window. If any mnemonics were",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwin.md",
+    "filename": "tlmwin.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "provided, this group all those into 1 window. (default:\n                        False)\n  --size SIZE           The size of the window. Should be in the following\n                        format: [W]x[H]\n  -t TITLE, --title TITLE\n                        Sets the title of the tlm window.\n  --xy XY               Sets the initial X/Y location of the window. The value\n                        should be provided as X+Y.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwin.md",
+    "filename": "tlmwin.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntlmwincloseall\nusage: /tlmwincloseall [-h]\n\nCloses every tlmwin and tlmstat that is open in the system.\n\noptions:\n  -h, --help  show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwincloseall.md",
+    "filename": "tlmwincloseall.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntlmwinls\nusage: /tlmwinls [-h]\n\nLists the titles (defaults to the APID) and X/Y locations of all telemetry\nwindows.\n\noptions:\n  -h, --help  show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwinls.md",
+    "filename": "tlmwinls.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntlmwinrate\nusage: /tlmwinrate [-h] -a APIDS [APIDS ...] [-f FREQUENCY] [-t TITLE] [--xy XY]\n                   [-s SIZE] [-cn CONNECTION_NAME] [--separate]",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwinrate.md",
+    "filename": "tlmwinrate.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Opens a window for each specified apid. An apid includes all the mnemonics.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwinrate.md",
+    "filename": "tlmwinrate.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -a APIDS [APIDS ...], --apids APIDS [APIDS ...]\n                        APID(s) and/or APID mnemonic(s) to update interval\n                        frequency for and open telemetry windows. APIDs can be\n                        specified individually or with ranges. Examples:\n                           /tlmwinrate -a 600\n                           /tlmwinrate -a 600 601\n                           /tlmwinrate -a 600-602\n                           /tlmwinrate -a 600,601-603,700",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwinrate.md",
+    "filename": "tlmwinrate.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "/tlmwinrate -a 600,601-603,700\n  -cn CONNECTION_NAME, --connection_name CONNECTION_NAME\n                        Connection name to send the /tlmrate command through.\n                        Defaults to the primary Spacecraft connection.\n  -f FREQUENCY, --frequency FREQUENCY\n                        Sets update interval frequency (Hz) of the APID.\n                        (default: 1.0)\n  -h, --help            show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwinrate.md",
+    "filename": "tlmwinrate.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "-h, --help            show this help message.\n  --separate            Flag that opens APIDs in separate windows instead of\n                        consolidating into 1 window. If any mnemonics were\n                        provided, this group all those into 1 window. (default:\n                        False)\n  -s SIZE, --size SIZE  The size of the window. Should be in the following\n                        format: [W]x[H]\n  -t TITLE, --title TITLE\n                        Sets the title of the tlm window.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwinrate.md",
+    "filename": "tlmwinrate.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Sets the title of the tlm window.\n  --xy XY               Sets the initial X/Y location of the window. The value\n                        should be provided as X+Y.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwinrate.md",
+    "filename": "tlmwinrate.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\ntlmwins\nusage: /tlmwins [-h] [{close,hide,show}]\n\nOperations to perform on telemetry windows.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwins.md",
+    "filename": "tlmwins.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "positional arguments:\n  {close,hide,show}  Operation to perform. Possible choices are:\n                     \n                     \"close\"\n                     \n                     Closes all telemetry windows.\n                     \n                     \"hide\"\n                     \n                     Hides all telemetry windows.\n                     \n                     \"show\"\n                     \n                     Brings all telemetry windows to the forefront. (default:\n                     show)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwins.md",
+    "filename": "tlmwins.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -h, --help         show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/tlmwins.md",
+    "filename": "tlmwins.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Docs - MAX, SOLIS, DevTool (Dev) MAX GDS (2.4) Maestro (Dev) \n Old Release: You are not reading the most recent version of this documentation. To get documentation for a newer release, use the version selector on this page and indicate which version of the documentation you'd like to see.\nui_timestamp\nusage: /ui_timestamp [-h] [-f FORMAT] [{True,False}]\n\nCommand to turn on/off timestamps in UI.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/ui_timestamp.md",
+    "filename": "ui_timestamp.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "Command to turn on/off timestamps in UI.\n\npositional arguments:\n  {True,False}          Enable or disable time stamps. True to enable\n                        timestamps. False to disable timestamps. If none is\n                        specified, only the current state of /ui_timestamp is\n                        displayed. (default: None)",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/ui_timestamp.md",
+    "filename": "ui_timestamp.md",
+    "page": 0,
+    "filetype": ".md"
+  },
+  {
+    "text": "options:\n  -f FORMAT, --format FORMAT\n                        Format of the timestamps. Accepts all time format\n                        sequences accepted by Python's datetime formatter.\n                        If a space is desired in the time format sequence, place\n                        single or double quotes around the desired time format\n                        string. (default: [%H:%M:%S])\n  -h, --help            show this help message.",
+    "source": "/home/justinkwerner/LLM Projects/thesis_llm/thesis_llm/SATOPS/ui_timestamp.md",
+    "filename": "ui_timestamp.md",
+    "page": 0,
+    "filetype": ".md"
+  }
+]

@@ -1,0 +1,13 @@
+.env
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+Lectures/
+Labs/
+databases/
+docker_db/
+*.ipynb
+.python-version
+uv.lock
